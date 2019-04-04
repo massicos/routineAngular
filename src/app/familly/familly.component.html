@@ -1,0 +1,11 @@
+<h2>Details - {{familly.name}}</h2>
+<div><span>id: </span>{{familly.id}}</div>
+<div><span>name: </span>{{familly.name}}</div>
+<div><span>valueByStar: </span>{{familly.valueByStar}}</div>
+<div>
+  <label>moneyByStar:
+    <input [(ngModel)]="familly.valueByStar" placeholder="valueByStar">
+  </label>
+</div>
+
+<app-childs-list></app-childs-list>

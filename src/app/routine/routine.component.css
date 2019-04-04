@@ -1,0 +1,44 @@
+.routine {
+    border-style: solid;
+    border-color: black;
+}
+
+.routine ul {
+    list-style: none;
+    margin-right: 3px;
+    padding: 2px 4px 2px 4px;
+}
+
+.routine li {
+    border-style: solid;
+    border-color: black;
+}
+
+.step {
+    margin: 5px 5px 5px 5px;
+}
+
+.step_initial {
+    color: darkblue;
+}
+
+.step_inProgress {
+    color: orange;
+}
+
+.step_success {
+    color: green;
+}
+
+.step_failed {
+    color: red;
+}
+
+button {
+    background-color: blue;
+    margin-right: 3px;
+    padding: 2px 4px 2px 4px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}

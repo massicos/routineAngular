@@ -1,0 +1,22 @@
+<div *ngIf="routine" class="routine">
+<h2>{{routine.name}} ({{routine.status}})</h2>
+
+<div>
+  <span>Étoiles : {{totalStars}}</span>
+  <span *ngIf="medal"> | Médaille !!</span>
+</div>
+
+Heure de départ ({{departureTime | date:'HH:mm'}}) : <input [ngModel]="departureTime | date:'HH:mm'" placeholder="departureTime" (change)="onChange(departureTime)">
+Temps total : {{totalTime}}
+Temps libre : {{freeTime}} secondes {{freeTimeMinutes}}:{{freeTimeSeconds}}
+
+<button (click)="onClickSart()">GO</button>
+
+<ul class="routines">
+  <li *ngFor="let step of routine.steps" class="step step_{{step.status}}">
+    <span>Step = {{step.name}} {{step.status}} Temps : {{step.time}} Étoiles : {{step.stars}}</span>
+    <span *ngIf="step.status == 'initial'"><button (click)="onClickStepStart(step)">START</button></span>
+    <span *ngIf="step.status == 'inProgress'"><button (click)="onClickStepStop(step)">STOP</button> <button (click)="onClickStepCancel(step)">CANCEL</button></span>
+  </li>
+</ul>
+</div>

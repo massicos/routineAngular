@@ -1,0 +1,10 @@
+<h2>Liste des routines</h2>
+<ul class="routines">
+  <li *ngFor="let routine of routines"
+    [class.selected]="routine === selectedRoutine"
+    (click)="onSelect(routine)">
+    <span class="child">{{routine.id}}</span> {{routine.name}}
+  </li>
+</ul>
+
+<app-routine [routine]="selectedRoutine"></app-routine>
