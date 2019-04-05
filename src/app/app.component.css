@@ -1,0 +1,8 @@
+nav a {
+    background-color: gray;
+    margin-right: 3px;
+    padding: 2px 4px 2px 4px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}

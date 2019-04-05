@@ -26,6 +26,8 @@ export class RoutineComponent implements OnInit {
   totalStars: number = 0;
   medal: boolean = false;
   stepStopTime: number = 0;
+  stepRemamingTimeMinutes: number = 0;
+  stepRemamingTimeSeconds: number = 0;
   routineTimer;
   subscribeTimer;
   //freeTime: number = 0;
@@ -53,8 +55,17 @@ export class RoutineComponent implements OnInit {
 
   myTime(val) {
     console.log("=== myTime ===");
-    console.log("val = " + val);
-    console.log(this.routine.status);
+    //console.log("val = " + val);
+    //console.log(this.routine.status);
+
+    let d = new Date(Date.now());
+    let diff = +this.stepStopTime - +d;
+
+    let timeRemaining = diff / 1000;
+    this.stepRemamingTimeMinutes = Math.floor(timeRemaining / 60); // 7
+    this.stepRemamingTimeSeconds = timeRemaining % 60;
+
+    //console.log(timeRemainingMinutes + ":" + timeRemainingSeconds);
   }
 
 
@@ -62,14 +73,28 @@ export class RoutineComponent implements OnInit {
     console.log(this.routine.status);
     step.status = stepStatus.inProgress;
 
-    this.stepStopTime = Date.now() + +step.time;
-    let d = new Date(this.stepStopTime);
-    console.log("stepStopTime = " + d.toLocaleDateString());
+    let d = new Date(Date.now());
+    this.stepStopTime = +d + (+step.time * 1000 * 60);
+
+    let d2 = new Date(this.stepStopTime);
+    console.log("stepStopTime = " + d2.toLocaleTimeString());
   }
 
   onClickStepStop(step: Step) {
-    this.totalStars += step.stars;
-    step.status = stepStatus.success;
+    let d = new Date(Date.now());
+    let diff = +this.stepStopTime - +d;
+
+    let d2 = new Date(this.stepStopTime);
+    console.log(d.toLocaleTimeString() + " - " + d2.toLocaleTimeString());
+    console.log("diff = " + diff);
+
+    if (diff > 0) {
+      step.status = stepStatus.success;
+      this.totalStars += step.stars;
+    }
+    else {
+      step.status = stepStatus.failed;
+    }
 
     let medal = true;
     for (let step of this.routine.steps){

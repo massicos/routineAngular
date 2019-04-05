@@ -16,7 +16,11 @@ Temps libre : {{freeTime}} secondes {{freeTimeMinutes}}:{{freeTimeSeconds}}
   <li *ngFor="let step of routine.steps" class="step step_{{step.status}}">
     <span>Step = {{step.name}} {{step.status}} Temps : {{step.time}} Étoiles : {{step.stars}}</span>
     <span *ngIf="step.status == 'initial'"><button (click)="onClickStepStart(step)">START</button></span>
-    <span *ngIf="step.status == 'inProgress'"><button (click)="onClickStepStop(step)">STOP</button> <button (click)="onClickStepCancel(step)">CANCEL</button></span>
+    <span *ngIf="step.status == 'inProgress'">
+      <button (click)="onClickStepStop(step)">STOP</button>
+      <button (click)="onClickStepCancel(step)">CANCEL</button>
+      {{stepRemamingTimeMinutes}}:{{stepRemamingTimeSeconds}}
+    </span>
   </li>
 </ul>
 </div>
