@@ -19,17 +19,19 @@ export class RoutineComponent implements OnInit {
 
   @Input() routine: Routine;
   departureTime: number =  Date.now();
+  departureTimeHoursMinutes: string = "";
   freeTime: number = 0;
-  freeTimeMinutes: number = 0;
-  freeTimeSeconds: number = 0;
+  freeTimeMinutes: String = "0";
+  freeTimeSeconds: String = "0";
   totalTime: number = 0;
   totalStars: number = 0;
   medal: boolean = false;
   stepStopTime: number = 0;
-  stepRemamingTimeMinutes: number = 0;
-  stepRemamingTimeSeconds: number = 0;
+  stepRemamingTimeMinutes: String = "0";
+  stepRemamingTimeSeconds: String = "0";
   routineTimer;
   subscribeTimer;
+  timerLook: string = "timerLook";
   //freeTime: number = 0;
   //status: string = "stop";
 
@@ -46,32 +48,45 @@ export class RoutineComponent implements OnInit {
     }
     this.routine.status = routineStatus.inProgress;
 
-    //emit 0 after 1 second then complete, since no second argument is supplied
-    this.routineTimer = timer(1000, 2000);
-    //const source = timer(1000);
-    //output: 0
+    this.routineTimer = timer(1000, 1000);
     this.subscribeTimer = this.routineTimer.subscribe(val => {this.myTime(val);});
   }
 
+  addZero(timeInt: number): String {
+    let timeStr: String = timeInt.toString();
+    if (timeStr.length == 1){
+      timeStr = "0" + timeStr;
+    }
+    return timeStr;
+  }
+
   myTime(val) {
-    console.log("=== myTime ===");
-    //console.log("val = " + val);
-    //console.log(this.routine.status);
-
-    let d = new Date(Date.now());
-    let diff = +this.stepStopTime - +d;
-
-    let timeRemaining = diff / 1000;
-    this.stepRemamingTimeMinutes = Math.floor(timeRemaining / 60); // 7
-    this.stepRemamingTimeSeconds = timeRemaining % 60;
-
-    //console.log(timeRemainingMinutes + ":" + timeRemainingSeconds);
+    if (this.routine.status == routineStatus.inProgress) {
+      console.log("=== myTime ===");
+      //console.log("val = " + val);
+      //console.log(this.routine.status);
+  
+      let d = new Date(Date.now());
+      let diff = +this.stepStopTime - +d;
+  
+      let timeRemaining = diff / 1000;
+      this.stepRemamingTimeMinutes = this.addZero(Math.floor(timeRemaining / 60)); // 7
+      if (this.stepRemamingTimeMinutes == "0") {
+        this.timerLook = "timerLookWarning";
+      }
+      this.stepRemamingTimeSeconds = this.addZero(Math.trunc(timeRemaining % 60));
+  
+      this.computeFreeTime(new Date(this.departureTime), new Date(Date.now()));
+  
+      //console.log(timeRemainingMinutes + ":" + timeRemainingSeconds);
+    }
   }
 
 
   onClickStepStart(step: Step) {
     console.log(this.routine.status);
     step.status = stepStatus.inProgress;
+    this.timerLook = "timerLook"
 
     let d = new Date(Date.now());
     this.stepStopTime = +d + (+step.time * 1000 * 60);
@@ -95,6 +110,9 @@ export class RoutineComponent implements OnInit {
     else {
       step.status = stepStatus.failed;
     }
+    this.totalTime = this.getTotalTime();
+
+    this.computeFreeTime(new Date(this.departureTime), new Date(Date.now()));
 
     let medal = true;
     for (let step of this.routine.steps){
@@ -112,17 +130,15 @@ export class RoutineComponent implements OnInit {
   onClickStepCancel(step: Step) {
     step.status = stepStatus.initial;
   }
-  onChange(newDepartureTime: number): void {
-    this.freeTime = +this.freeTime + +newDepartureTime;
-  }  
 
-  getFreeTime() {
-    //var freeTime: number = 25;
-    //1552946147891 
-    // 1552946183031 
-
-    console.log(this.departureTime + " " + this.totalTime);
-    return this.freeTime;
+  onChangeDepartureTimeHoursMinutes(): void {
+    let d = new Date(this.departureTime);
+    let strArray: string[] = this.departureTimeHoursMinutes.split(":");
+    d.setHours(+strArray[0]);
+    d.setMinutes(+strArray[1]);
+    
+    this.departureTime = +d;
+    this.computeFreeTime(new Date(this.departureTime), new Date(Date.now()));
   }
 
   computeFreeTime(endDate: Date, compareDate: Date) {
@@ -133,8 +149,8 @@ export class RoutineComponent implements OnInit {
     console.log("enDate " + endDate.toLocaleTimeString());
     console.log("compareDate2 " + compareDate.toLocaleTimeString());
     this.freeTime = (+endDate - +compareDate) / 1000;
-    this.freeTimeMinutes = Math.floor(this.freeTime / 60); // 7
-    this.freeTimeSeconds = this.freeTime % 60;
+    this.freeTimeMinutes = this.addZero(Math.floor(this.freeTime / 60)); // 7
+    this.freeTimeSeconds = this.addZero(Math.trunc(this.freeTime % 60));
     console.log("freeTime = " + this.freeTime);
     console.log(endDate.getMilliseconds());
     //this.freeTime = 22;
@@ -143,18 +159,29 @@ export class RoutineComponent implements OnInit {
   getTotalTime() {
     var totalTime = 0;
     for (let step of this.routine.steps){
-      totalTime += step.time;
+      console.log("getTotalTime - Dans la boucle " + step.status);
+      if (step.status == stepStatus.initial
+        || step.status == stepStatus.inProgress){
+          totalTime += step.time;
+        }
     }
     return totalTime;
   }
 
   resetInfo() {
+    for (let step of this.routine.steps){
+      //console.log("resetInfo - Dans la boucle 1" + step.status);
+      step.status = stepStatus.initial;
+    }   
+
     this.totalTime = this.getTotalTime();
+    console.log("totalTime = " + this.totalTime);
       
     this.departureTime =  Date.now();
     var d: Date = new Date(this.departureTime);
     d.setMinutes(d.getMinutes() + this.totalTime + 10);
     this.departureTime = d.getTime();
+    this.departureTimeHoursMinutes = this.addZero(d.getHours()) + ":" + this.addZero(d.getMinutes());
 
     this.computeFreeTime(new Date(this.departureTime), new Date(Date.now()));
 
@@ -171,6 +198,7 @@ export class RoutineComponent implements OnInit {
   ngOnChanges() {
     console.log("ngOnChanges");
     if (this.routine != undefined) {
+      console.log("ngOnChanges - resetInfo");
       this.resetInfo();
     }
   }

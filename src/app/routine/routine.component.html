@@ -6,7 +6,31 @@
   <span *ngIf="medal"> | Médaille !!</span>
 </div>
 
-Heure de départ ({{departureTime | date:'HH:mm'}}) : <input [ngModel]="departureTime | date:'HH:mm'" placeholder="departureTime" (change)="onChange(departureTime)">
+Heure de départ ({{departureTime | date:'HH:mm'}}) : 
+<input [(ngModel)]="departureTimeHoursMinutes" 
+name="departureTimeHoursMinutes" 
+required 
+minlength="5"
+maxlength="5"
+pattern="[0-9]{2}:[0-9]{2}"
+placeholder="Heure" 
+(change)="onChangeDepartureTimeHoursMinutes()"
+#validDepartureTimeHoursMinutes="ngModel"
+>
+<div *ngIf="validDepartureTimeHoursMinutes.invalid && (validDepartureTimeHoursMinutes.dirty || validDepartureTimeHoursMinutes.touched)"
+    class="alert alert-danger">
+
+  <div *ngIf="validDepartureTimeHoursMinutes.errors.required">
+    Name is required.
+  </div>
+  <div *ngIf="validDepartureTimeHoursMinutes.errors.minlength">
+    Name must be at least 4 characters long.
+  </div>
+  <div *ngIf="validDepartureTimeHoursMinutes.errors.pattern">
+    Veuillez entrer l'heure sous le format suivant : HH:MM.
+  </div>
+</div>
+
 Temps total : {{totalTime}}
 Temps libre : {{freeTime}} secondes {{freeTimeMinutes}}:{{freeTimeSeconds}}
 
@@ -19,7 +43,7 @@ Temps libre : {{freeTime}} secondes {{freeTimeMinutes}}:{{freeTimeSeconds}}
     <span *ngIf="step.status == 'inProgress'">
       <button (click)="onClickStepStop(step)">STOP</button>
       <button (click)="onClickStepCancel(step)">CANCEL</button>
-      {{stepRemamingTimeMinutes}}:{{stepRemamingTimeSeconds}}
+      <span class="step_{{timerLook}}">{{stepRemamingTimeMinutes}}:{{stepRemamingTimeSeconds}}</span>
     </span>
   </li>
 </ul>
