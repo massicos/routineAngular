@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  level: "test"
+  level: "test",
+  serviceServer: "localhost:8080/webservices"
 };
 
 /*

@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  level: "local"
+  level: "local",
+  serviceServer: "localhost:8181"
 };
 
 /*

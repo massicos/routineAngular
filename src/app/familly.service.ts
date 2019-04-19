@@ -4,6 +4,7 @@ import { FAMILLY } from './mock-familly';
 
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class FamillyService {
 
-  private famillyUrl = 'http://localhost:8181/routine/familly/Massicotte'; 
+  private famillyUrl = 'http://' + environment.serviceServer + '/routine/familly/Massicotte'; 
   constructor(private http: HttpClient) { }
 
   getFamilly(): Observable<Familly> {
