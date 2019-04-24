@@ -3,8 +3,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Routine } from '../routine';
 import { routineStatus } from '../routine';
 
+import { RoutinesService } from '../services/routines.service';
+
 import { Step } from '../Step';
 import { stepStatus } from '../Step';
+import { Log } from '../Log';
 import { timer } from 'rxjs';
 import { forEach } from '@angular/router/src/utils/collection';
 import { Time } from '@angular/common';
@@ -35,7 +38,7 @@ export class RoutineComponent implements OnInit {
   //freeTime: number = 0;
   //status: string = "stop";
 
-  constructor() { 
+  constructor(private routinesService: RoutinesService) { 
     //this.routine.status = "none";
     console.log("constructor");
   }
@@ -106,6 +109,8 @@ export class RoutineComponent implements OnInit {
     if (diff > 0) {
       step.status = stepStatus.success;
       this.totalStars += step.stars;
+      let log: Log = {"idChild": 1, "stars": step.stars, "medal": 0};
+      this.routinesService.stepComplete(log).subscribe();
     }
     else {
       step.status = stepStatus.failed;
@@ -125,6 +130,12 @@ export class RoutineComponent implements OnInit {
     }
     this.routine.status = routineStatus.success;
     this.medal = medal;
+    let numberOfMedal: number = 0;
+    if (medal) {
+      numberOfMedal = 1;
+    }
+    let log: Log = {"idChild": 1, "stars": 0, "medal": numberOfMedal};
+    this.routinesService.routineComplete(log).subscribe();
   }
 
   onClickStepCancel(step: Step) {
