@@ -1,6 +1,13 @@
 <h2>My childs</h2>
-<ul class="childs">
-  <li *ngFor="let child of childs">
-    <span class="child">{{child.id}}</span> {{child.surname}} stars = {{child.stars}} medal = {{child.medals}}
-  </li>
-</ul>
+<table>
+  <thead>
+    <th>Prénom</th>
+    <th>Étoiles</th>
+    <th>Médailles</th>
+  </thead>
+  <tr *ngFor="let child of childs">
+    <td>{{child.surname}}</td>
+    <td>{{child.stars}}</td>
+    <td>{{child.medals}}</td>
+  </tr>
+</table>

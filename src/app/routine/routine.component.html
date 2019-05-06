@@ -32,7 +32,7 @@ placeholder="Heure"
 </div>
 
 Temps total : {{totalTime}}
-Temps libre : {{freeTime}} secondes {{freeTimeMinutes}}:{{freeTimeSeconds}}
+Temps libre : {{freeTimeMinutes}}:{{freeTimeSeconds}}
 
 <button (click)="onClickSart()">GO</button>
 
@@ -43,7 +43,9 @@ Temps libre : {{freeTime}} secondes {{freeTimeMinutes}}:{{freeTimeSeconds}}
     <span *ngIf="step.status == 'inProgress'">
       <button (click)="onClickStepStop(step)">STOP</button>
       <button (click)="onClickStepCancel(step)">CANCEL</button>
-      <span class="step_{{timerLook}}">{{stepRemamingTimeMinutes}}:{{stepRemamingTimeSeconds}}</span>
+      <span *ngIf="stepRemamingTimeMinutes" class="step_{{timerLook}}">
+        {{stepRemamingTimeMinutes}}:{{stepRemamingTimeSeconds}}
+      </span>
     </span>
   </li>
 </ul>

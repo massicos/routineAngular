@@ -35,12 +35,8 @@ export class RoutineComponent implements OnInit {
   routineTimer;
   subscribeTimer;
   timerLook: string = "timerLook";
-  //freeTime: number = 0;
-  //status: string = "stop";
 
   constructor(private routinesService: RoutinesService) { 
-    //this.routine.status = "none";
-    console.log("constructor");
   }
 
   onClickSart() {
@@ -52,7 +48,7 @@ export class RoutineComponent implements OnInit {
     this.routine.status = routineStatus.inProgress;
 
     this.routineTimer = timer(1000, 1000);
-    this.subscribeTimer = this.routineTimer.subscribe(val => {this.myTime(val);});
+    this.subscribeTimer = this.routineTimer.subscribe(val => {this.manageTime(val);});
   }
 
   addZero(timeInt: number): String {
@@ -63,12 +59,8 @@ export class RoutineComponent implements OnInit {
     return timeStr;
   }
 
-  myTime(val) {
-    if (this.routine.status == routineStatus.inProgress) {
-      console.log("=== myTime ===");
-      //console.log("val = " + val);
-      //console.log(this.routine.status);
-  
+  manageTime(val) {
+    if (this.routine.status == routineStatus.inProgress) {  
       let d = new Date(Date.now());
       let diff = +this.stepStopTime - +d;
   
@@ -80,22 +72,19 @@ export class RoutineComponent implements OnInit {
       this.stepRemamingTimeSeconds = this.addZero(Math.trunc(timeRemaining % 60));
   
       this.computeFreeTime(new Date(this.departureTime), new Date(Date.now()));
-  
-      //console.log(timeRemainingMinutes + ":" + timeRemainingSeconds);
     }
   }
 
 
   onClickStepStart(step: Step) {
-    console.log(this.routine.status);
     step.status = stepStatus.inProgress;
     this.timerLook = "timerLook"
 
     let d = new Date(Date.now());
     this.stepStopTime = +d + (+step.time * 1000 * 60);
 
-    let d2 = new Date(this.stepStopTime);
-    console.log("stepStopTime = " + d2.toLocaleTimeString());
+    this.stepRemamingTimeMinutes = "";
+    this.stepRemamingTimeSeconds = "";
   }
 
   onClickStepStop(step: Step) {
@@ -103,8 +92,6 @@ export class RoutineComponent implements OnInit {
     let diff = +this.stepStopTime - +d;
 
     let d2 = new Date(this.stepStopTime);
-    console.log(d.toLocaleTimeString() + " - " + d2.toLocaleTimeString());
-    console.log("diff = " + diff);
 
     if (diff > 0) {
       step.status = stepStatus.success;
@@ -153,24 +140,15 @@ export class RoutineComponent implements OnInit {
   }
 
   computeFreeTime(endDate: Date, compareDate: Date) {
-    console.log("--- computeFreeTime ---");
-    console.log("totalTime = " + this.totalTime);
-    console.log("compareDate1 " + compareDate.toLocaleTimeString());
     compareDate.setMinutes(compareDate.getMinutes() + this.totalTime);
-    console.log("enDate " + endDate.toLocaleTimeString());
-    console.log("compareDate2 " + compareDate.toLocaleTimeString());
     this.freeTime = (+endDate - +compareDate) / 1000;
     this.freeTimeMinutes = this.addZero(Math.floor(this.freeTime / 60)); // 7
     this.freeTimeSeconds = this.addZero(Math.trunc(this.freeTime % 60));
-    console.log("freeTime = " + this.freeTime);
-    console.log(endDate.getMilliseconds());
-    //this.freeTime = 22;
   }
 
   getTotalTime() {
     var totalTime = 0;
     for (let step of this.routine.steps){
-      console.log("getTotalTime - Dans la boucle " + step.status);
       if (step.status == stepStatus.initial
         || step.status == stepStatus.inProgress){
           totalTime += step.time;
@@ -181,12 +159,10 @@ export class RoutineComponent implements OnInit {
 
   resetInfo() {
     for (let step of this.routine.steps){
-      //console.log("resetInfo - Dans la boucle 1" + step.status);
       step.status = stepStatus.initial;
     }   
 
     this.totalTime = this.getTotalTime();
-    console.log("totalTime = " + this.totalTime);
       
     this.departureTime =  Date.now();
     var d: Date = new Date(this.departureTime);
@@ -203,13 +179,10 @@ export class RoutineComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("ngOnInit");
   }
 
   ngOnChanges() {
-    console.log("ngOnChanges");
     if (this.routine != undefined) {
-      console.log("ngOnChanges - resetInfo");
       this.resetInfo();
     }
   }
